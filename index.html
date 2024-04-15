@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Countdown Timer</title>
+  <style>
+    body {
+      background-color: purple;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .countdown-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .countdown-container h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      border-bottom: 2px solid white;
+      width: 100%;
+      text-align: center;
+      padding-bottom: 10px;
+    }
+
+    .countdown {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      max-width: 400px;
+      margin-bottom: 20px;
+      border: 2px solid white;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .countdown div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .countdown span {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      border: 2px solid white;
+      padding: 10px 20px;
+      border-radius: 50%;
+    }
+
+    .countdown div div {
+      font-size: 0.8rem;
+      text-align: center;
+    }
+
+    #countdown-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #countdown-form input,
+    #countdown-form button {
+      margin: 10px;
+      padding: 10px;
+      background-color: white;
+      color: purple;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    #countdown-form input {
+      width: 100%;
+    }
+
+    #countdown-form button:hover {
+      cursor: pointer;
+      background-color: purple;
+      color: white;
+    }
+
+    #dd-mm-yyyy {
+      margin-bottom: 10px;
+    }
+
+    #start-countdown,
+    #cancel-timer {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="countdown-container">
+    <h1>Countdown Timer</h1>
+    <div class="countdown">
+      <div>
+        <span id="days">0</span>
+        <div>Days</div>
+      </div>
+      <div>
+        <span id="hours">0</span>
+        <div>Hours</div>
+      </div>
+      <div>
+        <span id="minutes">0</span>
+        <div>Minutes</div>
+      </div>
+      <div>
+        <span id="seconds">0</span>
+        <div>Seconds</div>
+      </div>
+   </div>
+    <form id="countdown-form">
+      <input type="date" id="dd-mm-yyyy" name="target-date" max="99 days from now" required>
+      <button id="start-countdown" type="submit">Start Countdown</button>
+    </form>
+    <button id="cancel-timer" style="display:none;">Cancel Timer</button>
+    <div id="message" style="display:none;">The countdown is over! What's next on your adventure?</div>
+  </div>
+  <script>
+    const form = document.getElementById('countdown-form');
+    const targetDateInput = document.getElementById('dd-mm-yyyy');
+    const daysSpan = document.getElementById('days');
+    const hoursSpan = document.getElementById('hours');
+    const minutesSpan = document.getElementById('minutes');
+    const secondsSpan = document.getElementById('seconds');
+    const cancelTimerButton= document.getElementById('cancel-timer');
+    let countdown;
+    const messageDiv = document.getElementById('message');
+  
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const targetDate = new Date(targetDateInput.value);
+      const now = new Date();
+      const distance = targetDate - now;
+  
+      if (distance < 0) {
+        clearInterval(countdown);
+        messageDiv.style.display = 'block';
+        return;
+      }
+  
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours= Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance %(1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+  
+      daysSpan.textContent = days;
+      hoursSpan.textContent = hours;
+      minutesSpan.textContent = minutes;
+      secondsSpan.textContent = seconds;
+  
+      cancelTimerButton.style.display = 'block';
+      clearInterval(countdown);
+      countdown = setInterval(() => {
+        const now = new Date();
+        const distance = targetDate - now;
+  
+        if (distance < 0) {
+          clearInterval(countdown);
+          cancelTimerButton.style.display = 'none';
+          messageDiv.style.display = 'block';
+          return;
+        }
+  
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours= Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance %(1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+  
+        daysSpan.textContent = days;
+        hoursSpan.textContent = hours;
+        minutesSpan.textContent = minutes;
+        secondsSpan.textContent = seconds;
+      }, 1000);
+      document.getElementById('start-countdown').style.display = 'none';
+    });
+  
+    cancelTimerButton.addEventListener('click', () => {
+      clearInterval(countdown);
+      cancelTimerButton.style.display = 'none';
+      document.getElementById('start-countdown').style.display = 'block';
+      messageDiv.style.display = 'none';
+    });
+  </script>
+</body>
+</html>
